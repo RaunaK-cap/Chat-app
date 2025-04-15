@@ -12,63 +12,66 @@ interface pageschema{
 
 const Pages = ({roomid , username , socket , chatmsg , setchatmsg}: pageschema) => {
 
-    const[input , setinput] = useState("")
-    const[responedmsg ,setresponedmsg] = useState([])
+  const [ input , setinput ] = useState("")
+ 
 
-   
+  function handler(){
+    const message = { text: input , isuser:false}
+    setchatmsg((prev)=>[...prev , message])
+    chatmsg.forEach((data : any)=>{
+      console.log(data.text)
+    })
+  }
 
-        function inputhandler(){
-          
-            console.log(input)
-            
-            //@ts-ignore
-            setchatmsg((prev)=> [...prev , input])
-            socket.send(input)
-            //@ts-ignore
-            socket.onmessage=(e)=>{
-              //@ts-ignore
-              setresponedmsg((prev)=>[...prev , e.data])
-              console.log(e.data)
-            }
-          
-        }
-  return (
-    <div className="relative bg-linear-7 from-black to-gray-300   h-screen flex justify-center items-center">
-      
-      <div className=" text-white  h-[30rem] w-[20rem]">
-        <div className="flex justify-between  items-end relative -top-10">
-          <h1 className="text-black font-mono relative top-3"> Roomid: {roomid} </h1>
-          <h1 className="text-6xl font-bold relative -top-10  "> Chat... </h1>
-          <h1 className="text-black font-mono relative top-3"> User: {username}</h1>
-        </div>
-        <div className="w-[20rem] h-[20rem]  p-2 overflow-y-auto scroll flex flex-col-reverse space-y-2">
-          {responedmsg.map((data )=> (
-            <p className="flex justify-start items-start  p-3 text-white px-2">
-               {data}
-            <p className="font-extralight text-sm relative top-4"> user 
-          </p></p>
-          ))}
-          {}
-          
-          
-          {
-            chatmsg.map((data)=>(
-              <p className="flex justify-end items-end p-3 text-white m-2"> 
-              {data}
-              <p className="font-extralight text-sm relative top-4"> you</p></p>
-            ))
-          }
-   
-        </div>
-          
-        <div className="  relative left-5 ">
-        <input onChange={(e)=> setinput(e.target.value)} className=" p-2 px-9   rounded-xl  bg-gray-300 text-black font-mono  font-thin" placeholder="Message......"/>
-        <button onClick={inputhandler} className="p-2 px-2 mx-1 bg-purple-700 text-white rounded-lg  font-mono font-semibold hover:cursor-pointer"> Send</button>  
-        </div>
+  
+
+
+ return <div>
+  <div className=" h-screen text-white bg-[url('chatimg2.png')] bg-cover"> 
+    <div className="h-[42rem] w-[30rem] bg-neutral-400/70 shadow-md shadow-white  rounded-2xl p-3 relative top-1/2 left-1/2 -translate-y-[50%] -translate-x-[50%]"> 
+      <h1 className="flex justify-center items-center font-semibold text-5xl p-1 "> Chat </h1>
+      <div className="w-full  py-6 mt-2 rounded-xl grid grid-cols-2 px-4 bg-zinc-300/50 text-zinc-900 "> 
+        <h2> Roomid: {roomid} </h2>
+        <h2> users : 2 </h2>
+        <h2> Connection:2 </h2>
+        <h2>Name: {username}</h2>
       </div>
-        
+      <div className="w-full h-[26rem] bg-sky-500/20  overflow-y-auto flex flex-col scroll-smooth scroll-hidden rounded-2xl p-5 m-1">
+        {chatmsg.map((data, index) => (
+          <div
+          key={index}
+          className={`flex ${data.isuser ? "justify-end" : "justify-start"} w-full`}
+          >
+                <div className={`bg-${data.isuser ? "blue" : "green"}-600 p-2 px-4 rounded-lg max-w-[40%] break-words whitespace-pre-wrap text-white`}>
+                  <p className="text-white text-sm break-words">{data.text}</p>
+                  <p className="text-xs text-gray-300">{data.isuser ? "You" : "User"}</p>
+                </div>
+              </div>     
+            ))}
+        </div>
+       
+        <div className="w-full fixed bottom-0 left-0  mb-1 justify-center items-center">
+          <div className="flex justify-center items-center gap-2 ">
+
+          <input
+          className="outline-none p-4 px-5 w-[24rem]   rounded-xl text-black bg-neutral-200" 
+          type="text"
+          placeholder="Message"
+          value={input} 
+          onChange={(e)=>{setinput(e.target.value)}} />
+          <button 
+          onClick={handler}
+          onKeyDown={(e)=> (e.key==='Enter' && {handler})}
+          className=" bg-black text-white  rounded-xl px-4 p-4 hover:cursor-pointer"
+          > Send </button>
+          </div>
+        </div>
     </div>
-  )
+    
+
+  </div>
+
+ </div>
 }
 
 export default Pages
