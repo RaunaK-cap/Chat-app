@@ -5,10 +5,43 @@ const ws = new WebSocketServer({ port: 8080 });
 let userconnection: number = 0;
 let allsocket: WebSocket[] = [];
 interface schemaroom {
-    room : any
+    roomid : any
+    username:string
     socket:any,
 }
 let allscoketuser : schemaroom[]= []
+
+
+ws.on("connection", (socket)=>{
+    socket.on("message",(message)=>{
+        const parsedmsg = JSON.parse(message.toString())
+        if(parsedmsg.type=="join"){
+            allscoketuser.push({
+                roomid:parsedmsg.payload.roomid,
+                username:parsedmsg.payload.message,
+                socket
+
+            })
+        }
+
+        if(parsedmsg.type =="chat"){
+            const userroomid = allscoketuser.find((e)=> e.socket == socket)?.roomid
+
+            allscoketuser.forEach((u)=>{
+            
+                if(u.roomid == userroomid){
+                    u.socket.send(JSON.stringify({
+                        type: "chat",
+                        payload: {
+                            message: parsedmsg.payload.message,
+                            name: parsedmsg.payload.username  // add more fields if needed
+                        }
+                    }))
+                }
+            })
+        }
+    })
+})
 
 
 
@@ -46,19 +79,9 @@ let allscoketuser : schemaroom[]= []
 //         })
 // })
 
- 
-ws.on("connection" , (socket)=>{
-    socket.on("message" , (message)=>{
-        console.log(message.toString())
-        if(message.toString()=="ping"){
-            socket.send("pong")
-        }
-    })
-})
-
 
 // // ws.on("connection", function (socket) {
-// //   allsocket.push(socket);
+    // //   allsocket.push(socket);
 // //   console.log("user connected succesfully");
 // //   socket.send(" it's working");
 // //   socket.send(` userconnected : ${usercount}`);
@@ -157,3 +180,43 @@ ws.on("connection" , (socket)=>{
 
 
 
+
+// ws.on("connection" , (socket)=>{
+
+//     userconnection++
+//     const broadcastUserCount = () => {
+//         const message = JSON.stringify({ count: userconnection });
+//         ws.clients.forEach((client) => {
+//             if (client.readyState === WebSocket.OPEN) {
+//                 client.send(message);
+//             }
+//         });
+//     };
+
+//     // Broadcast the updated userconnection count when a new client connects
+//     broadcastUserCount();
+
+//     socket.on("message" , (message)=>{
+//         console.log(message.toString())
+        
+        
+//         if(message.toString()=="ping"){
+//             setInterval(()=>{
+
+//             socket.send(JSON.stringify({type:"pong" , userconnection:userconnection}))
+//             }, 5000)
+//         }
+//     })
+//     socket.close=()=>{
+//         userconnection--
+//         broadcastUserCount()
+        
+
+//     }
+
+    
+//     setInterval(()=>{
+//         console.log(userconnection)
+//     } , 10000)
+    
+// })
