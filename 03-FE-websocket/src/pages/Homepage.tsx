@@ -5,9 +5,11 @@ interface schema{
     username: string
     setusername:(value :string)=> void
     handler: ()=>void
+    
 }
 
-const Homepage = ({roomid , setroomid , username , setusername , handler}: schema) => { 
+const Homepage = ({roomid , setroomid , username , setusername , handler }: schema) => { 
+
   return (
     <div className={`h-screen text-white bg-black bg-cover `}>
       
