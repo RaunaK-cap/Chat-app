@@ -28,18 +28,31 @@ const Pages = ({
       const message = { text: input, isuser: true };
       setchatmsg((prev: chatmsg[]) => [...prev, message]);
     }
-    socket.send(input);
+    const datatosend = JSON.stringify({
+      "type": "chat",
+      "payload": {
+        "message": input,
+        "username":username
+      }
+   });
+
+    socket.send(datatosend)
     setinput("");
   }
 
   useEffect(() => {
     socket.onmessage = (res) => {
-      const data = JSON.parse(res.data) as {type:string};
-      console.log(data);
-      const mess = { text: data.type, isuser: false };
-      setchatmsg((prev: chatmsg[]) => [...prev, mess]);
+      const data = JSON.parse(res.data);
+      const mess = { text: data.payload.message , isuser: false };
+      if(data.payload.name !== username){
+        setchatmsg((prev: chatmsg[]) => [...prev, mess]);
+      }
     };
   }, [socket]);
+
+  
+
+
 
   return (
     <div>
