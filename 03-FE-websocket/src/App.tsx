@@ -1,11 +1,13 @@
 
 import Homepage from './pages/Homepage'
 import Pages from './pages/Chatpage'
-import { data, Route  ,  Routes, useNavigate } from 'react-router'
+import {  Route  ,  Routes, useNavigate } from 'react-router'
+import toast , {Toaster} from 'react-hot-toast'
 
 
 import './App.css'
 import { useEffect, useState } from 'react'
+import Loader from './pages/Loader'
 
 interface chatmsg{
   text:string,
@@ -18,6 +20,7 @@ function App() {
       const[username , setusername] = useState<string>("")
       const navigate = useNavigate()
       const[socket , setsocket] = useState<WebSocket|undefined>()
+      const [loader , setloader] = useState(false)
       
       const[chatmsg, setchatmsg] = useState<chatmsg[]>([])
 
@@ -30,12 +33,20 @@ function App() {
               "username":username
             }
          });
-
+        //@ts-ignore
         socket.send(datatosend)
 
-         navigate('/chat')
+          setloader(true)
+
+          setTimeout(()=>{
+            setloader(false)
+            navigate('/chat')
+            
+          } , 3000)
+
         }else{
-          alert("Enter all Information..")
+          // alert("Enter all Information..")
+          toast.error("Enter all Information")
         }
       }
         useEffect(() => {
@@ -49,12 +60,17 @@ function App() {
 
   return (
     <>
+    <Toaster position='top-right' />
+    { loader ? (<Loader/>) : (
     <Routes>
-      <Route path='/' element = {<Homepage roomid= {roomid} setroomid={setroomid} username={username} setusername={setusername} handler={handler} socket={socket}  />}/>
+      <Route path='/' element = {<Homepage roomid= {roomid} setroomid={setroomid} username={username} setusername={setusername} handler={handler}
+      //@ts-ignore
+      socket={socket}  />}/>
       <Route path='/chat' element={<Pages roomid={roomid} username={username} 
       //@ts-ignore
       socket={socket} chatmsg={chatmsg} setchatmsg ={setchatmsg}/>}/>
     </Routes>
+    )}
 
     </>
   )
