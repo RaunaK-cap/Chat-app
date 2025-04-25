@@ -13,6 +13,7 @@ interface pageschema {
 interface chatmsg {
   text: string;
   isuser: boolean;
+  time:string;
 }
 
 const Pages = ({
@@ -23,9 +24,18 @@ const Pages = ({
   setchatmsg,
 }: pageschema) => {
   const [input, setinput] = useState<string>("");
+  const [user , setuser] = useState<string[]>([])
+  const [usercount , setusercount] = useState<number>(0)
+  const [Joined, setJoined] = useState<boolean>(false)
+
   function handler() {
     if (input) {
-      const message = { text: input, isuser: true };
+      const message = { 
+        text: input, 
+        isuser: true, 
+        time:new Date().toLocaleTimeString()
+      };
+
       setchatmsg((prev: chatmsg[]) => [...prev, message]);
     }
     const datatosend = JSON.stringify({
@@ -40,19 +50,74 @@ const Pages = ({
     setinput("");
   }
 
+  // Send join message only once when component mounts
   useEffect(() => {
-    socket.onmessage = (res) => {
-      const data = JSON.parse(res.data);
-      const mess = { text: data.payload.message , isuser: false };
-      if(data.payload.name !== username){
-        setchatmsg((prev: chatmsg[]) => [...prev, mess]);
+    const sendJoinMessage = () => {
+      if (!Joined) {
+        console.log("Sending join message");
+        socket.send(JSON.stringify({
+          "type": "join",
+          "payload": {
+            "roomid": roomid,
+            "username": username
+          }
+        }));
+        setJoined(true);
       }
     };
-  }, [socket]);
 
-  
+    if (socket.readyState === WebSocket.OPEN) {
+      sendJoinMessage();
+    } else {
+      const handleOpen = () => {
+        sendJoinMessage();
+      };
+      socket.addEventListener('open', handleOpen, { once: true });
+      return () => {
+        socket.removeEventListener('open', handleOpen);
+      };
+    }
+  }, [socket, roomid, username, Joined]);
 
+  useEffect(() => {
+    const handlemessage= (res : MessageEvent) => {
+      const data = JSON.parse(res.data);
 
+      if (data.type === "chat") {
+        const mess = { 
+          text: data.payload.message, 
+          isuser: false, 
+          time: new Date().toLocaleTimeString() 
+        };
+
+        if (data.payload.name !== username) {
+          setchatmsg((prev: chatmsg[]) => [...prev, mess]);
+        }
+      } 
+    
+      if (data.type === "user-count" || data.type === "user-left") {
+        console.log("your usercount room:", data.payload.usercount);
+        setusercount(data.payload.usercount);
+
+        if (Array.isArray(data.payload.username)) {
+          // Ensure unique usernames
+          const uniqueUsernames = [...new Set(data.payload.username)];
+          //@ts-ignore
+          setuser(uniqueUsernames);
+        }
+      }
+    };
+
+    socket.addEventListener("message", handlemessage);
+    
+    return () => {
+      socket.removeEventListener("message", handlemessage);
+    };
+  }, [socket, username]);
+
+  useEffect(() => {
+    console.log("user's array:", user);
+  }, [user]);
 
   return (
     <div>
@@ -64,9 +129,18 @@ const Pages = ({
           </h1>
           <div className="w-full  py-6 mt-2 rounded-xl grid grid-cols-2 px-4 bg-zinc-500/50 text-zinc-200  font-mono">
             <h2> Roomid: {roomid} </h2>
-            <h2> users : 2 </h2>
-            <h2> Connection:2 </h2>
-            <h2>Name: {username}</h2>
+            <h2> Users : {usercount} </h2>
+            <h3> 
+            { <div className="col-span-2  gap-1">
+              <h2> Username:</h2>
+              {user.map((name, index) => (
+                <p key={index} className="text-sm">
+                  {name}
+                </p>
+              ))}
+            </div> }
+            </h3>
+            
           </div>
           <div className="w-full h-[26rem]   overflow-y-auto flex flex-col scroll-smooth scroll-hidden rounded-2xl p-5 m-1">
             {chatmsg.map((data, index) => (
@@ -77,14 +151,14 @@ const Pages = ({
                 } w-full`}
               >
                 <div
-                  className={`bg-${
-                    data.isuser ? "blue" : "green"
-                  }-600 p-2 px-4 rounded-lg max-w-[40%] break-words whitespace-pre-wrap text-white`}
+                  className={` ${data.isuser ? "bg-blue-600":"bg-zinc-800"} p-2 m-1 px-4 rounded-lg max-w-[40%] break-words whitespace-pre-wrap text-white`}
                 >
                   <p className="text-white text-md break-words">{data.text}</p>
-                  <p className="text-xs text-gray-300">
+                  <p className="text-[10px] text-gray-300">
                     {data.isuser ? "You" : "User"}
                   </p>
+                  <p className="text-[10px] text-zinc-200 text-right"
+                  > {data.time}</p>
                 </div>
               </div>
             ))}
