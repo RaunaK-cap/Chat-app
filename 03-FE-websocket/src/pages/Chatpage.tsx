@@ -146,8 +146,7 @@ const Pages = ({
         {/* Main chat container - Changed fixed dimensions to responsive */}
         <div className="w-full md:w-[90%] lg:w-[70%] xl:w-[50%] max-w-md mx-auto h-screen md:h-[42rem] sm:absolute sm:shadow-sm sm:shadow-white rounded-2xl p-2 md:p-3 relative md:top-1/2 md:left-1/2 md:-translate-y-[50%] md:-translate-x-[50%]">
           <h1 className="flex justify-center items-center font-semibold text-3xl md:text-5xl p-1">
-            {" "}
-            Chat{" "}
+            Chat
           </h1>
           {/* Room info section - Made responsive */}
           <div className="w-full py-2 md:py-2 mt-2 rounded-xl grid grid-cols-2 px-2 md:px-4 bg-zinc-500/50 text-zinc-200 font-mono text-sm md:text-base">
@@ -165,14 +164,14 @@ const Pages = ({
             </h3>
             <h2 className="text-sm"> 
               <h1 className="text-red-500 font-semibold">How to use it:</h1> 
-              share roomid with your friends & tell them to join with that roomid 
+              share roomid with your friends & tell them to join with that same roomid 
             </h2>
           </div>
           
           {/* Chat messages area with auto-scroll behavior */}
           <div 
             ref={messagesContainerRef}
-            className="w-full h-[60vh] md:h-[26rem] overflow-y-auto flex flex-col scroll-smooth scroll-hidden rounded-2xl p-3 md:p-5 m-1"
+            className="w-full h-[60vh]  md:h-[26rem] overflow-y-auto flex flex-col scroll-smooth scroll-hidden rounded-2xl p-3 md:p-5 m-1"
           >
             {chatmsg.map((data, index) => (
               <div
@@ -197,7 +196,7 @@ const Pages = ({
           </div>
 
           {/* Input area - Made responsive */}
-          <div className="w-full fixed bottom-0 left-0 pb-2 md:mb-1 justify-center items-center">
+          <div className="w-full fixed bottom-6 left-0 pb-2 md:mb-1 justify-center items-center">
             <div className="flex justify-center items-center gap-1 md:gap-2 px-2">
               <input
                 className="outline-none p-2 md:p-3 px-3 md:px-5 w-[70%] md:w-[24rem] rounded-xl md:rounded-2xl text-white bg-black border border-blue-800 text-sm md:text-base"
@@ -218,8 +217,7 @@ const Pages = ({
                 onClick={handler}
                 className="bg-black text-white rounded-xl md:rounded-2xl border border-blue-800 px-2 md:px-4 p-2 md:p-3 hover:cursor-pointer font-semibold text-sm md:text-base"
               >
-                {" "}
-                Send{" "}
+                Send
               </button>
             </div>
           </div>
