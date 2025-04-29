@@ -2,7 +2,7 @@
 import Homepage from './pages/Homepage'
 import Pages from './pages/Chatpage'
 import {  Route  ,  Routes, useNavigate } from 'react-router'
-import toast , {Toaster} from 'react-hot-toast'
+// import toast , {Toaster} from 'react-hot-toast'
 
 
 import './App.css'
@@ -45,8 +45,8 @@ function App() {
           } , 3000)
 
         }else{
-          // alert("Enter all Information..")
-          toast.error("Enter all Information")
+          alert("Enter all Information..")
+          // toast.error("Enter all Information")
         }
       }
         useEffect(() => {
@@ -60,7 +60,7 @@ function App() {
 
   return (
     <>
-    <Toaster position='top-right' />
+    {/* <Toaster position='top-right' /> */}
     { loader ? (<Loader/>) : (
     <Routes>
       <Route path='/' element = {<Homepage roomid= {roomid} setroomid={setroomid} username={username} setusername={setusername} handler={handler}
