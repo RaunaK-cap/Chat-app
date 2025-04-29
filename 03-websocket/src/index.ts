@@ -3,10 +3,10 @@ import { WebSocket, WebSocketServer } from "ws";
 const ws = new WebSocketServer({ port: 8080 });
 let userconnection: number = 0;
 let allsocket: WebSocket[] = [];
-interface schemaroom {
-    roomid : any
+interface schemaroom {   
+    roomid : string | number
     username:string
-    socket:any,
+    socket:WebSocket,
 }
 let allscoketuser : schemaroom[]= []
 
@@ -14,7 +14,9 @@ ws.on("connection", (socket)=>{
    
     socket.on("message",(message)=>{
         const parsedmsg = JSON.parse(message.toString())
-        console.log(parsedmsg)
+
+        //console.log to see what coming on
+        // console.log(parsedmsg)
         
         if(parsedmsg.type=="join"){ 
             // Check if this username and socket already exists in the room
@@ -38,8 +40,9 @@ ws.on("connection", (socket)=>{
             // to prevent duplication username to go 
             const uniqueUsernames = Array.from(new Set(roomusers.map(user => user.username)));
             let user_connection_count = uniqueUsernames.length;
-            
-            console.log("current user connected : ", user_connection_count);
+
+            //console,log here to debug errors
+            // console.log("current user connected : ", user_connection_count);
 
             roomusers.forEach(u => {
                 u.socket.send(JSON.stringify({
@@ -85,8 +88,9 @@ ws.on("connection", (socket)=>{
         // to prevent the duplication username  to go ...
         const uniqueUsernames = Array.from(new Set(roomUsers.map(user => user.username)));
         const user_connection_count = uniqueUsernames.length;
-        
-        console.log("User left room", user_connection_count);
+
+        //console.log here to debug errors
+        // console.log("User left room", user_connection_count);
 
         roomUsers.forEach(u => {
           u.socket.send(JSON.stringify({
