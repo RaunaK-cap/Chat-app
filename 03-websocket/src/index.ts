@@ -69,7 +69,7 @@ ws.on("connection", (socket)=>{
         }
 
         if(parsedmsg.type =="chat"){
-            const userroomid = allscoketuser.find((e)=> e.socket == socket)?.roomid
+            const userroomid = allscoketuser.find((e)=> e.socket === socket)?.roomid
             const time = new Date().toLocaleTimeString([], { hour:'2-digit', minute:"2-digit"})
             allscoketuser.forEach((u)=>{
                 if(u.roomid == userroomid){
