@@ -1,8 +1,21 @@
-import { json } from "express";
+import express from "express";
+import http from "http"
 import { WebSocket, WebSocketServer } from "ws";
-const ws = new WebSocketServer({ port: 8080 });
-let userconnection: number = 0;
-let allsocket: WebSocket[] = [];
+
+
+const app = express()
+const PORT = process.env.PORT || 8080;
+const server = http.createServer(app)
+
+const ws = new WebSocketServer({server});
+
+app.get("/" , (req,res)=>{
+    //to verify server is working or not 
+    res.json({
+        message:"websocket server is running ..."
+    })
+})
+
 interface schemaroom {   
     roomid : string | number
     username:string
@@ -105,3 +118,5 @@ ws.on("connection", (socket)=>{
       });
     
 })
+
+server.listen(PORT)
