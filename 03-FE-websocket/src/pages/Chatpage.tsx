@@ -27,8 +27,11 @@ const Pages = ({
   const [user, setuser] = useState<string[]>([]);
   const [usercount, setusercount] = useState<number>(0);
   const [Joined, setJoined] = useState<boolean>(false);
+  
+  // Create a ref for the messages container
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
+  // Function to scroll to bottom
   const scrollToBottom = () => {
     if (messagesContainerRef.current) {
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
@@ -42,7 +45,10 @@ const Pages = ({
         isuser: true, 
         time: new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})
       };
+
       setchatmsg((prev: chatmsg[]) => [...prev, message]);
+      
+      // Schedule a scroll after state update
       setTimeout(scrollToBottom, 100);
     }
     const datatosend = JSON.stringify({
@@ -56,6 +62,8 @@ const Pages = ({
     socket.send(datatosend);
     setinput("");
   }
+
+  // Send join message only once when component mounts
   useEffect(() => {
     const sendJoinMessage = () => {
       if (!Joined) {
@@ -93,11 +101,12 @@ const Pages = ({
         const mess = { 
           text: data.payload.message, 
           isuser: false, 
-          time: new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit" }) 
+          time: new Date().toLocaleTimeString([] , {hour:"2-digit", minute:"2-digit"}) 
         };
 
         if (data.payload.name !== username) {
           setchatmsg((prev: chatmsg[]) => [...prev, mess]);
+          // Schedule a scroll after receiving a message
           setTimeout(scrollToBottom, 100);
         }
       } 
@@ -107,6 +116,7 @@ const Pages = ({
         setusercount(data.payload.usercount);
 
         if (Array.isArray(data.payload.username)) {
+          // Ensure unique usernames
           const uniqueUsernames = [...new Set(data.payload.username)];
           //@ts-ignore
           setuser(uniqueUsernames);
@@ -121,7 +131,7 @@ const Pages = ({
     };
   }, [socket, username]);
 
-  // this useeffect is for the auto-scrolling
+  // Auto-scroll when chatmsg updates
   useEffect(() => {
     scrollToBottom();
   }, [chatmsg]);
@@ -133,16 +143,18 @@ const Pages = ({
   return (
     <div>
       <div className="min-h-screen text-white bg-black bg-cover">
+        {/* Main chat container - Changed fixed dimensions to responsive */}
         <div className="w-full md:w-[90%] lg:w-[70%] xl:w-[50%] max-w-md mx-auto h-screen md:h-[42rem] sm:absolute sm:shadow-sm sm:shadow-white rounded-2xl p-2 md:p-3 relative md:top-1/2 md:left-1/2 md:-translate-y-[50%] md:-translate-x-[50%]">
           <h1 className="flex justify-center items-center font-semibold text-3xl md:text-5xl p-1">
             Chat
           </h1>
+          {/* Room info section - Made responsive */}
           <div className="w-full py-2 md:py-2 mt-2 rounded-xl grid grid-cols-2 px-2 md:px-4 bg-zinc-500/50 text-zinc-200 font-mono text-sm md:text-base">
             <h2 className="font-semibold text-red-500"> Roomid: {roomid} </h2>
             <h2> Users: {usercount} </h2>
             <h3> 
             { <div className="col-span-2 gap-1">
-              <h2> Username:</h2>
+              <h2> Users-name:</h2>
               {user.map((name, index) => (
                 <p key={index} className="text-xs md:text-sm font-mono">
                   {name}
@@ -156,7 +168,7 @@ const Pages = ({
             </h2>
           </div>
           
-
+          {/* Chat messages area with auto-scroll behavior */}
           <div 
             ref={messagesContainerRef}
             className="w-full h-[60vh]  md:h-[26rem] overflow-y-auto flex flex-col scroll-smooth scroll-hidden rounded-2xl p-3 md:p-5 m-1"
@@ -183,7 +195,8 @@ const Pages = ({
             ))}
           </div>
 
-          <div className="w-full fixed bottom-0 left-0 pb-1 md:mb-1 justify-center items-center">
+          {/* Input area - Made responsive */}
+          <div className="w-full fixed bottom-0 left-0 pb-2 md:mb-1 justify-center items-center">
             <div className="flex justify-center items-center gap-1 md:gap-2 px-2">
               <input
                 className="outline-none p-2 md:p-3 px-3 md:px-5 w-[70%] md:w-[24rem] rounded-xl md:rounded-2xl text-white bg-black border border-blue-800 text-sm md:text-base"
@@ -199,6 +212,7 @@ const Pages = ({
                   }
                 }}
               />
+
               <button
                 onClick={handler}
                 className="bg-black text-white rounded-xl md:rounded-2xl border border-blue-800 px-2 md:px-4 p-2 md:p-3 hover:cursor-pointer font-semibold text-sm md:text-base"
