@@ -14,8 +14,10 @@ const Homepage = ({roomid , setroomid , username , setusername , handler }: sche
     <div className={`h-screen text-white bg-black bg-cover `}>
       
     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-      <h1 className=' font-bold sm:text-5xl sm:mb-2 relative left-0 text-4xl sm:relative sm:left-0'>Quick-Chat...</h1>
-      <p className=" font-thin"> Talk on Real time ...! </p>
+      <h1 className=' font-bold sm:text-5xl sm:mb-2 pb-2 relative left-0 text-4xl sm:relative sm:left-0'>Quick-Chat...</h1>
+      <p className=" font-semibold text-md"> Talk on Real time ...! </p>
+      <p className=" font-thin"> No Any login Required</p>
+      <p className=" font-thin"> Just enter any name/number for roomid</p>
       <div className="py-6">
         <input
         
@@ -29,7 +31,7 @@ const Homepage = ({roomid , setroomid , username , setusername , handler }: sche
       value={username} 
         onChange={(e)=>{setusername(e.target.value)}} 
         className='p-2 px-12 rounded-xl text-white bg-black border border-neutral-500 text-left pl-3 font-mono outline-none hover:border-white '
-        placeholder='Your UserName '/>
+        placeholder='Your Name '/>
       <div>
 
       </div>
