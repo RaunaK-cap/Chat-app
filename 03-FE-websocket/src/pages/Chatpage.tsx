@@ -93,7 +93,7 @@ const Pages = ({
         const mess = { 
           text: data.payload.message, 
           isuser: false, 
-          time: new Date().toLocaleTimeString() 
+          time: new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit" }) 
         };
 
         if (data.payload.name !== username) {
