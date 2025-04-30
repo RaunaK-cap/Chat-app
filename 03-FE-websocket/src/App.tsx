@@ -50,7 +50,7 @@ function App() {
         }
       }
         useEffect(() => {
-        const ws= new WebSocket("ws://localhost:8080")
+        const ws= new WebSocket("wss://backend-for-quick-chat-app.onrender.com")
         setsocket(ws)
         ws.onopen = ()=>{
           console.log("connected baby")
